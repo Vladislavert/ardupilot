@@ -88,7 +88,7 @@ I2C_ORDER I2C3 I2C1
 
 # we need I2C clock at 400kHz for IMU
 define HAL_I2C_MAX_CLOCK 400000
-
+ 
 # order of UARTs (and USB)
 SERIAL_ORDER OTG1 USART3 USART6 USART2
 

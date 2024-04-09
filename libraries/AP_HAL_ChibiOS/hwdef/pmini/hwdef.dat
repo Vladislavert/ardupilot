@@ -20,7 +20,7 @@ FLASH_SIZE_KB 1024
 
 # only one I2C bus
 I2C_ORDER I2C1 I2C3
-define HAL_I2C_INTERNAL_MASK 1
+define HAL_I2C_INTERNAL_MASK 4
 
 # only one I2C bus in normal config
 PB6 I2C1_SCL I2C1
@@ -42,13 +42,13 @@ PB2 BMI088_G_CS CS
 PC4 BMI088_A_CS CS
 
 
-# SPI2 bus for flow and flash memory
+# SPI2 bus for flash memory
 PB13 SPI2_SCK SPI2
 PB14 SPI2_MISO SPI2
-PB15  SPI2_MOSI SPI2
+PB15 SPI2_MOSI SPI2
 PB12 FLASH_CS CS
 
-# SPI3 bus for flow and flash memory
+# SPI3 bus for flow 
 PB3 SPI3_SCK SPI3
 PB4 SPI3_MISO SPI3
 PC12  SPI3_MOSI SPI3
@@ -92,10 +92,10 @@ IMU BMI088 SPI:bmi088_a SPI:bmi088_g ROTATION_PITCH_180_YAW_270
 define HAL_BARO_ALLOW_INIT_NO_BARO
 
 # LEDs
-PC1 LED_GREEN OUTPUT GPIO(0) HIGH
+PA10 LED_GREEN OUTPUT GPIO(0) HIGH
 
 # blue LED marked as ACT
-PC0 LED_BLUE OUTPUT GPIO(1) HIGH
+PC8 LED_BLUE OUTPUT GPIO(1) HIGH
 
 # setup for BoardLED2
 define HAL_GPIO_A_LED_PIN 0
@@ -113,10 +113,9 @@ define HAL_BATT_CURR_SCALE 40
 
 # SPI devices
 SPIDEV bmi088_a       SPI1 DEVID1  BMI088_A_CS     MODE3  10*MHZ 10*MHZ
-SPIDEV bmi088_g       SPI1 DEVID2  BMI088_G_CS     MODE3  10*MHZ 10*MHZ
-# SPIDEV pixartflow     SPI2 DEVID3  FLOW_CS         MODE3  2*MHZ  2*MHZ
-
-# SPIDEV dataflash SPI2 DEVID3 FLASH_CS   MODE3 32*MHZ  32*MHZ
+SPIDEV bmi088_g       SPI1 DEVID1  BMI088_G_CS     MODE3  10*MHZ 10*MHZ
+SPIDEV dataflash      SPI2 DEVID2  FLASH_CS        MODE3  32*MHZ  32*MHZ
+SPIDEV pixartflow     SPI3 DEVID3  FLOW_CS         MODE3  2*MHZ  2*MHZ
 
 define HAL_LOGGING_DATAFLASH_ENABLED 1
 
@@ -135,13 +134,15 @@ PC7  TIM3_CH2  TIM3  PWM(4)  GPIO(53)
 
 # reduce max size of embedded params for apj_tool.py
 # define AP_PARAM_MAX_EMBEDDED_PARAM 1024
+define AP_RANGEFINDER_VL53L1X_ENABLED 1
+define AP_OPTICALFLOW_ENABLED 1
 
 # save some flash
 define HAL_GENERATOR_ENABLED 0
 define AC_OAPATHPLANNER_ENABLED 0
 define PRECISION_LANDING 0
-define AP_OPTICALFLOW_ENABLED 1
 define AP_ICENGINE_ENABLED 0
 
+
 # minimal drivers to reduce flash usage
-# include ../include/minimal.inc
+# include ../include/minimize_features.inc

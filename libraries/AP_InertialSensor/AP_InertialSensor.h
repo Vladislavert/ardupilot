@@ -10,9 +10,9 @@
 #define AP_INERTIAL_SENSOR_ACCEL_PEAK_DETECT_TIMEOUT_MS 500     // peak-hold detector timeout
 
 #include <AP_HAL/AP_HAL_Boards.h>
+#include <GCS_MAVLink/GCS.h>
 
 #include <stdint.h>
-
 #include <AP_AccelCal/AP_AccelCal.h>
 #include <AP_HAL/utility/RingBuffer.h>
 #include <AP_Math/AP_Math.h>

@@ -91,15 +91,18 @@ AP_InertialSensor_BMI088::probe(AP_InertialSensor &imu,
     }
 
     if (!sensor->init()) {
+        GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "BMI088: init failed");
         delete sensor;
         return nullptr;
     }
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "BMI088: sensor init");
 
     return sensor;
 }
 
 void AP_InertialSensor_BMI088::start()
 {
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "BMI088: try to start");
     if (!_imu.register_accel(accel_instance, ACCEL_BACKEND_SAMPLE_RATE, dev_accel->get_bus_id_devtype(_accel_devtype)) ||
         !_imu.register_gyro(gyro_instance, GYRO_BACKEND_SAMPLE_RATE,   dev_gyro->get_bus_id_devtype(DEVTYPE_INS_BMI088))) {
         return;
@@ -207,7 +210,7 @@ bool AP_InertialSensor_BMI088::accel_init()
     if (!read_accel_registers(REGA_CHIPID, &v, 1)) {
         return false;
     }
-
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "BMI088: %u", v); 
     switch (v) {
         case 0x1E:
             _accel_devtype = DEVTYPE_INS_BMI088;

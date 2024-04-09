@@ -112,7 +112,6 @@ bool AP_OpticalFlow_Pixart::setup_sensor(void)
         return false;
     }
     WITH_SEMAPHORE(_dev->get_semaphore());
-
     // power-up sequence
     reg_write(PIXART_REG_POWER_RST, 0x5A);
     hal.scheduler->delay(50);
@@ -125,16 +124,18 @@ bool AP_OpticalFlow_Pixart::setup_sensor(void)
     } else {
         id2 = reg_read(PIXART_REG_INV_PROD_ID2);
     }
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "id1=0x%02x id2=0x%02x ~id1=0x%02x\n", id1, id2, uint8_t(~id1));
     debug("id1=0x%02x id2=0x%02x ~id1=0x%02x\n", id1, id2, uint8_t(~id1));
     if (id1 == 0x3F && id2 == uint8_t(~id1)) {
         model = PIXART_3900;
-    } else if (id1 == 0x49 && id2 == uint8_t(~id1)) {
+    } else if (id1 == 0x49) {
         model = PIXART_3901;
     } else {
         debug("Not a recognised device\n");
+        GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "Not a recognised device");
         return false;
     }
-
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "FLOW 2");
     if (model == PIXART_3900) {
         srom_download();
 
@@ -163,9 +164,8 @@ bool AP_OpticalFlow_Pixart::setup_sensor(void)
     }
 
     hal.scheduler->delay(50);
-
     debug("Pixart %s ready\n", model==PIXART_3900?"3900":"3901");
-
+    GCS_SEND_TEXT(MAV_SEVERITY_DEBUG, "FLOW READY");
     integral.last_frame_us = AP_HAL::micros();
 
     _dev->register_periodic_callback(2000, FUNCTOR_BIND_MEMBER(&AP_OpticalFlow_Pixart::timer, void));
@@ -177,7 +177,7 @@ void AP_OpticalFlow_Pixart::reg_write(uint8_t reg, uint8_t value)
 {
     _dev->set_chip_select(true);
     reg |= PIXART_WRITE_FLAG;
-    _dev->transfer(&reg, 1, nullptr, 0);
+_dev->transfer(&reg, 1, nullptr, 0);
     hal.scheduler->delay_microseconds(PIXART_Tsrad);
     _dev->transfer(&value, 1, nullptr, 0);
     _dev->set_chip_select(false);
